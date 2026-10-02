@@ -1,0 +1,12 @@
+{
+  "addons": {
+    "caption-vote-logger@capman": {
+      "updates": [
+        {
+          "version": "1.0.0",
+          "update_link": "https://tonymnyphot.github.io/caption-vote-logger/releases/caption-vote-logger-1.0.0.xpi"
+        }
+      ]
+    }
+  }
+}
