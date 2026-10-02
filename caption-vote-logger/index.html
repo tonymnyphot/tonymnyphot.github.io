@@ -1,48 +1,203 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.7">
-  <style type="text/css">
-    body {background-color: #faf9f5}
-    p.p2 {margin: 0.0px 0.0px 24.0px 0.0px; font: 17.0px Georgia; color: #4c4b45; -webkit-text-stroke: #4c4b45}
-    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 17.0px 'Helvetica Neue'; color: #ffffff; -webkit-text-stroke: #ffffff}
-    p.p4 {margin: 0.0px 0.0px 10.8px 0.0px; font: 10.8px Georgia; color: #4c4b45; -webkit-text-stroke: #4c4b45}
-    p.p7 {margin: 0.0px 0.0px 17.0px 0.0px; font: 17.0px Georgia; color: #161615; -webkit-text-stroke: #161615}
-    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.2px Georgia; color: #4c4b45; -webkit-text-stroke: #4c4b45}
-    li.li6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 17.0px Georgia; color: #161615; -webkit-text-stroke: #161615}
-    span.s1 {font-kerning: none}
-    span.s2 {font-kerning: none; background-color: #a32121}
-    span.s3 {font-kerning: none; background-color: #ffffff}
-    span.s4 {-webkit-text-stroke: 0px #000000}
-    ol.ol1 {list-style-type: decimal}
-    ul.ul1 {list-style-type: disc}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caption Vote Logger</title>
+<meta name="description" content="A Firefox add-on that records the captions you vote on in the New Yorker and CartoonStock caption contests and saves them to a CSV or text file.">
+<link rel="icon" href="images/icon-128.png">
+<style>
+  :root {
+    --paper: #FBFCFD;
+    --panel: #FFFFFF;
+    --ink: #1C2A3A;
+    --muted: #5F6E7E;
+    --rule: #D8DEE5;
+    --action: #24405E;
+    --action-hover: #1A3049;
+    --funny: #2F7D5A;
+    --somewhat: #B8901C;
+    --unfunny: #A8433A;
+    --shot-bg: #EEF1F5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #141B23;
+      --panel: #1B242E;
+      --ink: #E6EBF0;
+      --muted: #9AA8B6;
+      --rule: #2E3A47;
+      --action: #4E7BAA;
+      --action-hover: #5E8BBA;
+      --shot-bg: #1B242E;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 17px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 56px 16px 72px; }
+
+  /* Header */
+  .hero { display: grid; grid-template-columns: 88px 1fr; gap: 20px; align-items: center; }
+  .hero img { width: 88px; height: 88px; }
+  h1 {
+    margin: 0;
+    font: italic 600 clamp(30px, 6vw, 40px)/1.1 Georgia, "Times New Roman", serif;
+  }
+  .summary { margin: 22px 0 0; font-size: 19px; line-height: 1.55; }
+
+  /* Install */
+  .install {
+    margin: 28px 0 0;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--action); color: #fff; text-decoration: none;
+    font-weight: 600; font-size: 17px;
+    padding: 13px 22px; border-radius: 8px;
+    transition: background .15s ease;
+  }
+  .btn:hover { background: var(--action-hover); }
+  .btn:focus-visible { outline: 3px solid var(--action); outline-offset: 3px; }
+  .btn svg { width: 18px; height: 18px; }
+  .meta { color: var(--muted); font-size: 15px; line-height: 1.45; }
+  .not-firefox {
+    display: none;
+    margin: 16px 0 0; padding: 12px 14px;
+    border: 1px solid var(--somewhat); border-radius: 8px;
+    font-size: 15px;
+  }
+  .not-firefox.show { display: block; }
+  .steps-mini { margin: 14px 0 0; color: var(--muted); font-size: 15px; }
+
+  /* Screenshots */
+  .shots { margin: 48px 0 0; display: grid; gap: 28px; }
+  figure { margin: 0; }
+  figure img {
+    display: block; width: 100%; height: auto;
+    border: 1px solid var(--rule); border-radius: 10px;
+    background: var(--shot-bg);
+  }
+  figcaption { margin-top: 8px; color: var(--muted); font-size: 15px; }
+
+  /* Body copy */
+  h2 {
+    margin: 52px 0 10px;
+    font: italic 600 24px/1.25 Georgia, "Times New Roman", serif;
+  }
+  h2 + p { margin-top: 0; }
+  p { margin: 0 0 14px; }
+  ol, ul { margin: 0 0 14px; padding-left: 1.4em; }
+  li { margin-bottom: 8px; }
+  li::marker { color: var(--muted); }
+  b { font-weight: 600; }
+  .votes { display: inline-flex; gap: 6px; flex-wrap: wrap; vertical-align: baseline; }
+  .chip { font-size: 14px; font-weight: 600; padding: 1px 9px; border-radius: 999px; color: #fff; }
+  .chip.f { background: var(--funny); }
+  .chip.s { background: var(--somewhat); }
+  .chip.u { background: var(--unfunny); }
+
+  .privacy {
+    margin-top: 52px; padding: 20px 22px;
+    background: var(--panel); border: 1px solid var(--rule); border-radius: 10px;
+  }
+  .privacy h2 { margin-top: 0; }
+  .privacy p:last-child { margin-bottom: 0; }
+
+  footer {
+    margin-top: 56px; padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    color: var(--muted); font-size: 14px;
+  }
+
+  @media (max-width: 520px) {
+    .hero { grid-template-columns: 64px 1fr; gap: 14px; }
+    .hero img { width: 64px; height: 64px; }
+    .summary { font-size: 18px; }
+    .btn { width: 100%; justify-content: center; }
+  }
+  @media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
+</style>
 </head>
 <body>
-<h1 style="margin: 0.0px 0.0px 3.0px 0.0px; font: 24.0px Georgia; color: #161615; -webkit-text-stroke: #161615"><span class="s1"><b>Caption Vote Logger</b></span></h1>
-<p class="p2"><span class="s1">A Firefox add-on that keeps a list of the captions you vote on in the New Yorker and CartoonStock caption contests, along with your votes, and lets you download the list as a CSV or text file.</span></p>
-<p class="p3"><span class="s2"><a href="file:///Users/gh/tools/caption_voting_extension/website/caption-vote-logger/releases/caption-vote-logger-1.0.0.xpi"><b>Install in Firefox (v1.0.0)</b><span class="s1"><b></b></span></a></span></p>
-<p class="p4"><span class="s3">Open this page in Firefox (version 115 or later), click the button, then click <b>Add</b> when Firefox asks. Updates install automatically.</span></p>
-<h2 style="margin: 0.0px 0.0px 6.0px 0.0px; font: 13.8px Georgia; color: #161615; -webkit-text-stroke: #161615"><span class="s1"><b>How to use it</b></span></h2>
-<ol class="ol1">
-  <li class="li6"><span class="s4"></span><span class="s1">Open the contest's voting page. If the add-on's popup shows an "Allow access" button, click it and reload the page. This may be needed once per site.</span></li>
-  <li class="li6"><span class="s4"></span><span class="s1">Vote as usual. The number on the toolbar icon counts your votes. Your list is kept after you close Firefox, so you can vote over several days.</span></li>
-  <li class="li6"><span class="s4"></span><span class="s1">Click the toolbar icon to see your totals and the last caption recorded.</span></li>
-  <li class="li6"><span class="s4"></span><span class="s1">Click <b>Download CSV</b> or <b>Download text</b>. The file goes to your Downloads folder.</span></li>
-  <li class="li6"><span class="s4"></span><span class="s1">To erase the list, click <b>Clear</b>, then click it again to confirm.</span></li>
-</ol>
-<h2 style="margin: 0.0px 0.0px 6.0px 0.0px; font: 13.8px Georgia; color: #161615; -webkit-text-stroke: #161615"><span class="s1"><b>Good to know</b></span></h2>
-<ul class="ul1">
-  <li class="li6"><span class="s4"></span><span class="s1">Captions are recorded only when you click a vote button. The add-on reads the page and never clicks or votes for you.</span></li>
-  <li class="li6"><span class="s4"></span><span class="s1">Uninstalling the add-on deletes your list, so download first.</span></li>
-  <li class="li6"><span class="s4"></span><span class="s1">CartoonStock support was tested on a mock-up of its voting page and will be confirmed when voting opens on October 13.</span></li>
-</ul>
-<h2 style="margin: 0.0px 0.0px 6.0px 0.0px; font: 13.8px Georgia; color: #161615; -webkit-text-stroke: #161615"><span class="s1"><b>Privacy</b></span></h2>
-<p class="p7"><span class="s1">The add-on collects no personal information and sends nothing anywhere. Your votes are stored in your browser and leave it only when you download them. It can access only newyorker.com and cartoonstock.com.</span></p>
-<p class="p8"><span class="s1">Not affiliated with The New Yorker, Condé Nast, or CartoonStock.</span></p>
+<main>
+
+  <header class="hero">
+    <img src="images/icon-128.png" alt="" width="88" height="88">
+    <h1>Caption Vote Logger</h1>
+  </header>
+
+  <p class="summary">Records the captions you vote on in the New Yorker and CartoonStock caption contests, along with your votes. Download your list as a CSV or plain-text file. Your data stays on your computer.</p>
+
+  <div class="install">
+    <a class="btn" href="releases/caption-vote-logger-1.0.0.xpi">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3v10M5.5 8.5 10 13l4.5-4.5M4 17h12"/></svg>
+      Add to Firefox
+    </a>
+    <div class="meta">Version 1.0.0 &middot; Firefox 115 or later<br>Free &middot; Updates install automatically</div>
+  </div>
+  <p class="steps-mini">Click the button, then click <b>Add</b> when Firefox asks.</p>
+  <p class="not-firefox" id="not-firefox">This add-on is for Firefox. Open this page in Firefox to install it. A Chrome version is in the works.</p>
+
+  <section class="shots" aria-label="Screenshots">
+    <figure>
+      <img src="images/popup.png" alt="The Caption Vote Logger popup showing 10 votes recorded: 2 Funny, 2 Somewhat, 6 Unfunny, the last caption recorded, and Download CSV, Download text, and Clear buttons." width="1280" height="800" loading="lazy">
+      <figcaption>Click the toolbar icon to see your totals, the last caption recorded, and the download buttons. The number on the icon counts your votes.</figcaption>
+    </figure>
+    <figure>
+      <img src="images/downloads.png" alt="Two downloaded files: a CSV with timestamp, vote, caption, and length columns, and a text file listing captions grouped under Funny, Somewhat funny, and Unfunny." width="1280" height="800" loading="lazy">
+      <figcaption>The two downloads: a CSV for spreadsheets, and a text file with your captions grouped by vote.</figcaption>
+    </figure>
+  </section>
+
+  <h2>What it does</h2>
+  <p>Caption Vote Logger keeps a list of the captions you vote on in the New Yorker Cartoon Caption Contest and the CartoonStock caption contest, along with the vote you gave each one:
+    <span class="votes"><span class="chip f">Funny</span><span class="chip s">Somewhat funny</span><span class="chip u">Unfunny</span></span></p>
+
+  <h2>How it works</h2>
+  <p>When you click a vote button, the add-on reads the caption on screen and saves it along with your vote and the current date and time. It only reads the page. It doesn't click, vote, or change anything on the site.</p>
+
+  <h2>How to use it</h2>
+  <ol>
+    <li>Open the contest's voting page. If the add-on's popup shows an <b>Allow access</b> button, click it and reload the page. This may be needed once per site.</li>
+    <li>Vote as usual. The number on the toolbar icon counts your votes. Your list is kept even after you close the browser or restart your computer, so you can vote over several days and keep adding to it.</li>
+    <li>Click the toolbar icon to see your totals and the last caption recorded, and to reach the download buttons.</li>
+    <li>Click <b>Download CSV</b> or <b>Download text</b>. The file goes to your Downloads folder.</li>
+    <li>To erase the list and start fresh, click <b>Clear</b>, then click it again to confirm.</li>
+  </ol>
+
+  <h2>The downloads</h2>
+  <ul>
+    <li><b>CSV:</b> one row per vote, with the time, vote, caption, and caption length in characters. It opens in any spreadsheet app, such as Excel, Numbers, or Google Sheets.</li>
+    <li><b>Text:</b> a simple text file with the captions grouped under Funny, Somewhat funny, and Unfunny, in the order you voted.</li>
+  </ul>
+
+  <h2>Good to know</h2>
+  <ul>
+    <li>Captions are recorded only when you click one of the vote buttons.</li>
+    <li>In private windows, the add-on runs only if you allow it in Firefox's add-on settings.</li>
+    <li>Your votes stay until you click Clear. Uninstalling the add-on also deletes them, so download first.</li>
+    <li>CartoonStock support has been tested on a mock-up of its voting page and will be confirmed when voting opens on its current contest.</li>
+  </ul>
+
+  <section class="privacy">
+    <h2>Privacy</h2>
+    <p>This add-on does not collect any personal information and does not send any data anywhere. Your votes are stored in your browser and leave it only when you download them. It can access only newyorker.com and cartoonstock.com, and on those sites it reads only the caption and the button you clicked.</p>
+  </section>
+
+  <footer>Made by Greg Howe. Not affiliated with The New Yorker, Cond&eacute; Nast, or CartoonStock.</footer>
+</main>
+<script>
+  // Point non-Firefox visitors to Firefox.
+  if (!/firefox|fxios/i.test(navigator.userAgent)) {
+    document.getElementById("not-firefox").classList.add("show");
+  }
+</script>
 </body>
 </html>
