@@ -5,6 +5,11 @@
         {
           "version": "1.0.0",
           "update_link": "https://tonymnyphot.github.io/caption-vote-logger/releases/caption-vote-logger-1.0.0.xpi"
+        },
+        {
+          "version": "1.0.1",
+          "update_link": "https://tonymnyphot.github.io/caption-vote-logger/releases/caption-vote-logger-1.0.1.xpi",
+          "update_hash": "sha256:4b2b5179287c3a7766caf28961b597d29ec6d94a592ca708ce9add71ac48f431"
         }
       ]
     }
