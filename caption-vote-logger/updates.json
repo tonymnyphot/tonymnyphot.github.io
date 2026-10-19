@@ -15,6 +15,10 @@
           "version": "1.0.2",
           "update_link": "https://tonymnyphot.github.io/caption-vote-logger/releases/caption-vote-logger-1.0.2.xpi",
           "update_hash": "sha256:c87b021811ff8f9b34c081cb09ebdd79b80978362cd65d00a22a656c52215bae"
+        },
+        {
+          "version": "1.1.0",
+          "update_link": "https://addons.mozilla.org/firefox/downloads/file/5126230/caption_vote_logger-1.1.0.xpi"
         }
       ]
     }
